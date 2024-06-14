@@ -6,6 +6,11 @@ A Python CLI tool with various utilities.
 
 ```bash
 pip install .
+sabcli echo "Hello, World!"
+sabcli echo "Hello, World!" --reverse
+
+scli echo "Hello, World!"
+scli echo "Hello, World!" --reverse
 ```
 
 ## Running Tests
