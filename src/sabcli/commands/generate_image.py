@@ -1,6 +1,7 @@
 import click
 import requests
 import json
+import os
 import openai
 import yaml
 import openai
