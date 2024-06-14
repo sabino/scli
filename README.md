@@ -13,6 +13,19 @@ scli echo "Hello, World!"
 scli echo "Hello, World!" --reverse
 ```
 
+### Generating Images
+
+To generate an image using the CLI, use the following command:
+
+```bash
+sabcli generate-image --prompt "a cat" --model "OfficialStableDiffusion/sd_xl_base_1.0" --width 1024 --height 1024
+```
+
+You can also pass dynamic arguments using the `-d` option:
+
+```bash
+sabcli generate-image --prompt "a cat" -d model OfficialStableDiffusion/sd_xl_base_1.0 -d images 1
+
 ## Running Tests
 
 To run the tests, use the following command:
