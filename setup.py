@@ -12,7 +12,7 @@ setup(
     entry_points={
         'console_scripts': [
             'sabcli=sabcli.cli:cli',
-        'sabcli=sabcli.cli:cli',
-        'scli=sabcli.cli:cli',
+            'scli=sabcli.cli:cli',
+        ]
     },
 )
