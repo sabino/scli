@@ -15,7 +15,7 @@ import yaml
 @click.option('--output', default='./output', required=True, help='Directory to save the generated image')
 @click.option('--enrich-prompt', '-ep', is_flag=True, help='Use GPT-4 to enrich the prompt')
 @click.option('--style', '-s', type=click.Path(exists=True), help='YAML file with styles for enriching the prompt')
-def generate_image(hostname, port, prompt, session_id, model, images, dynamic, output):
+def generate_image(hostname, port, prompt, session_id, model, images, dynamic, output, enrich_prompt, style):
     """Generate an image using the specified parameters."""
     base_url = f"http://{hostname}:{port}/API"
     
@@ -52,3 +52,23 @@ def generate_image(hostname, port, prompt, session_id, model, images, dynamic, o
         with open(image_path, 'wb') as f:
             f.write(image_response.content)
         click.echo(f"Image saved to {image_path}")
+
+
+def enrich_prompt_with_gpt4(prompt, style_path):
+    """Enrich the prompt using GPT-4 and styles from a YAML file."""
+    openai.api_key = "your_openai_api_key_here"
+    
+    if style_path:
+        with open(style_path, 'r') as file:
+            styles = yaml.safe_load(file)
+        style_instructions = "\n".join(styles.get('styles', []))
+    else:
+        style_instructions = ""
+
+    enriched_prompt = openai.Completion.create(
+        engine="text-davinci-003",
+        prompt=f"Enrich the following prompt: '{prompt}' with the following styles: {style_instructions}",
+        max_tokens=100
+    ).choices[0].text.strip()
+
+    return enriched_prompt
