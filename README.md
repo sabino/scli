@@ -8,6 +8,13 @@ A Python CLI tool with various utilities.
 pip install .
 ```
 
+## Running Tests
+
+To run the tests, use the following command:
+
+```bash
+pytest
+
 ## Usage
 
 ```bash
