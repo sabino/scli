@@ -7,8 +7,6 @@ setup(
     package_dir={'': 'src'},
     install_requires=[
         'click',
-    ],
-    tests_require=[
         'pytest',
     ],
     entry_points={
