@@ -1,5 +1,6 @@
 import click
 from sabcli.commands.echo import echo
+from sabcli.commands.generate_image import generate_image
 
 @click.group()
 def cli():
