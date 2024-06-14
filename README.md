@@ -18,13 +18,13 @@ scli echo "Hello, World!" --reverse
 To generate an image using the CLI, use the following command:
 
 ```bash
-sabcli generate-image --prompt "a cat" --model "OfficialStableDiffusion/sd_xl_base_1.0" --width 1024 --height 1024
+sabcli generate-image --prompt "a cat" --model "OfficialStableDiffusion/sd_xl_base_1.0" --width 1024 --height 1024 --output /path/to/save
 ```
 
 You can also pass dynamic arguments using the `-d` option:
 
 ```bash
-sabcli generate-image --prompt "a cat" -d model OfficialStableDiffusion/sd_xl_base_1.0 -d images 1
+sabcli generate-image --prompt "a cat" -d model OfficialStableDiffusion/sd_xl_base_1.0 -d images 1 --output /path/to/save
 
 ## Running Tests
 

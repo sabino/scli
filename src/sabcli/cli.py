@@ -35,7 +35,8 @@ def test():
 @click.option('--model', default=None, help='Model to use for image generation')
 @click.option('--images', default=1, help='Number of images to generate')
 @click.option('--dynamic', '-d', multiple=True, type=(str, str), help='Dynamic arguments to be added to the JSON payload')
-def generate_image(hostname, port, prompt, session_id, width, height, model, images, dynamic):
+@click.option('--output', required=True, help='Directory to save the generated image')
+def generate_image(hostname, port, prompt, session_id, width, height, model, images, dynamic, output):
     """Generate an image using the specified parameters."""
     base_url = f"http://{hostname}:{port}/API"
     
@@ -58,7 +59,16 @@ def generate_image(hostname, port, prompt, session_id, width, height, model, ima
         payload[key] = value
     
     response = requests.post(f"{base_url}/GenerateText2Image", headers={"Content-Type": "application/json"}, data=json.dumps(payload))
-    click.echo(response.json())
+    response_json = response.json()
+    click.echo(response_json)
+    
+    image_url = response_json.get("images", [None])[0]
+    if image_url:
+        image_response = requests.get(f"http://{hostname}:{port}/{image_url}")
+        image_path = f"{output}/{image_url.split('/')[-1]}"
+        with open(image_path, 'wb') as f:
+            f.write(image_response.content)
+        click.echo(f"Image saved to {image_path}")
 
 cli.add_command(test)
 cli.add_command(echo)
