@@ -66,11 +66,11 @@ def enrich_prompt_with_gpt4(prompt, style_path):
     """Enrich the prompt using GPT-4 and styles from a YAML file."""
     client = OpenAI()
 
-    with open('res/messages.yaml', 'r') as file:
+    with open(os.path.join('res', 'messages.yaml'), 'r') as file:
         messages = yaml.safe_load(file)['messages']
 
     if style_path:
-        with open(style_path, 'r') as file:
+        with open(os.path.join('res', style_path), 'r') as file:
             styles = yaml.safe_load(file)
         style_instructions = "\n".join(styles.get('styles', []))
     else:
