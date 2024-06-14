@@ -8,6 +8,7 @@ setup(
     install_requires=[
         'click',
         'pytest',
+        'requests',
     ],
     entry_points={
         'console_scripts': [
