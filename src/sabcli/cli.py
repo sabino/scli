@@ -30,12 +30,10 @@ def test():
 @click.option('--port', default=7801, help='Port of the server')
 @click.option('--prompt', required=True, help='Prompt for the image generation')
 @click.option('--session_id', default=None, help='Existing session ID')
-@click.option('--width', default=1024, help='Width of the image')
-@click.option('--height', default=1024, help='Height of the image')
-@click.option('--model', default=None, help='Model to use for image generation')
+@click.option('--model', default='OfficialStableDiffusion/sd3_medium_incl_clips', help='Model to use for image generation')
 @click.option('--images', default=1, help='Number of images to generate')
 @click.option('--dynamic', '-d', multiple=True, type=(str, str), help='Dynamic arguments to be added to the JSON payload')
-@click.option('--output', required=True, help='Directory to save the generated image')
+@click.option('--output', default='./output', required=True, help='Directory to save the generated image')
 def generate_image(hostname, port, prompt, session_id, width, height, model, images, dynamic, output):
     """Generate an image using the specified parameters."""
     base_url = f"http://{hostname}:{port}/API"
@@ -48,8 +46,6 @@ def generate_image(hostname, port, prompt, session_id, width, height, model, ima
         "session_id": session_id,
         "images": images,
         "prompt": prompt,
-        "width": width,
-        "height": height
     }
     
     if model:
