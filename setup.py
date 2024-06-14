@@ -9,6 +9,7 @@ setup(
         'click',
         'pytest',
         'requests',
+        'openai',
     ],
     entry_points={
         'console_scripts': [
