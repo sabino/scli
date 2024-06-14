@@ -2,8 +2,7 @@ import click
 import requests
 import json
 import os
-import openai
-import yaml
+from openai import OpenAI
 import openai
 import yaml
 
@@ -65,8 +64,11 @@ def generate_image(hostname, port, prompt, session_id, model, images, dynamic, o
 
 def enrich_prompt_with_gpt4(prompt, style_path):
     """Enrich the prompt using GPT-4 and styles from a YAML file."""
-    openai.api_key = "your_openai_api_key_here"
-    
+    client = OpenAI()
+
+    with open('messages.yaml', 'r') as file:
+        messages = yaml.safe_load(file)['messages']
+
     if style_path:
         with open(style_path, 'r') as file:
             styles = yaml.safe_load(file)
@@ -74,10 +76,13 @@ def enrich_prompt_with_gpt4(prompt, style_path):
     else:
         style_instructions = ""
 
-    enriched_prompt = openai.Completion.create(
-        engine="text-davinci-003",
-        prompt=f"Enrich the following prompt: '{prompt}' with the following styles: {style_instructions}",
-        max_tokens=100
-    ).choices[0].text.strip()
+    messages.append({"role": "user", "content": f"Enrich the following prompt: '{prompt}' with the following styles: {style_instructions}"})
+
+    completion = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=messages
+    )
+
+    enriched_prompt = completion.choices[0].message['content'].strip()
 
     return enriched_prompt
