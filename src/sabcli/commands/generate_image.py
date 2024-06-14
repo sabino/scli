@@ -3,6 +3,8 @@ import requests
 import json
 import openai
 import yaml
+import openai
+import yaml
 
 @click.command()
 @click.option('--hostname', default='localhost', help='Hostname of the server')
@@ -15,6 +17,8 @@ import yaml
 @click.option('--output', default='./output', required=True, help='Directory to save the generated image')
 @click.option('--enrich-prompt', '-ep', is_flag=True, help='Use GPT-4 to enrich the prompt')
 @click.option('--style', '-s', type=click.Path(exists=True), help='YAML file with styles for enriching the prompt')
+@click.option('--enrich-prompt', '-ep', is_flag=True, help='Use GPT-4 to enrich the prompt')
+@click.option('--style', '-s', type=click.Path(exists=True), help='YAML file with styles for enriching the prompt')
 def generate_image(hostname, port, prompt, session_id, model, images, dynamic, output, enrich_prompt, style):
     """Generate an image using the specified parameters."""
     base_url = f"http://{hostname}:{port}/API"
@@ -23,6 +27,10 @@ def generate_image(hostname, port, prompt, session_id, model, images, dynamic, o
         response = requests.post(f"{base_url}/GetNewSession", headers={"Content-Type": "application/json"}, data=json.dumps({}))
         session_id = response.json().get("session_id")
     
+    if enrich_prompt:
+        enriched_prompt = enrich_prompt_with_gpt4(prompt, style)
+        prompt = enriched_prompt
+
     if enrich_prompt:
         enriched_prompt = enrich_prompt_with_gpt4(prompt, style)
         prompt = enriched_prompt
