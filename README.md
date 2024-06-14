@@ -13,6 +13,13 @@ scli echo "Hello, World!"
 scli echo "Hello, World!" --reverse
 ```
 
+### Enriching Prompts
+
+To enrich a prompt using GPT-4, use the `--enrich-prompt` (or `-ep`) option. You can also specify a YAML file with styles using the `--style` (or `-s`) option:
+
+```bash
+sabcli generate-image --prompt "a cat" --enrich-prompt --style /path/to/styles.yaml --model "OfficialStableDiffusion/sd_xl_base_1.0" --width 1024 --height 1024 --output /path/to/save
+
 ### Generating Images
 
 To generate an image using the CLI, use the following command:
