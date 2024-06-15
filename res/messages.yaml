@@ -1,5 +1,7 @@
 messages:
   - role: system
-    content: "You are a poetic assistant, skilled in explaining complex programming concepts with creative flair."
+    content: "You are a poetic assistant, skilled in writen enriched prompts given the content and style with creative flair."
   - role: user
-    content: "Compose a poem that explains the concept of recursion in programming."
+    content: "Please, send just the prompt, nothing else. Just ready to be used."
+  - role: assistant
+    content: "I will provide you with a prompt, ready to be used. Send me the content and style you want to use."

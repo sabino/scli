@@ -30,11 +30,7 @@ def generate_image(hostname, port, prompt, session_id, model, images, dynamic, o
     if enrich_prompt:
         enriched_prompt = enrich_prompt_with_gpt4(prompt, style)
         prompt = enriched_prompt
-
-    if enrich_prompt:
-        enriched_prompt = enrich_prompt_with_gpt4(prompt, style)
-        prompt = enriched_prompt
-
+ 
     payload = {
         "session_id": session_id,
         "images": images,
@@ -74,15 +70,15 @@ def enrich_prompt_with_gpt4(prompt, style_path):
             styles = yaml.safe_load(file)
         style_instructions = "\n".join(styles.get('styles', []))
     else:
-        style_instructions = ""
+        style_instructions = "any style you want to add to the prompt."
 
     messages.append({"role": "user", "content": f"Enrich the following prompt: '{prompt}' with the following styles: {style_instructions}"})
 
     completion = client.chat.completions.create(
-        model="gpt-3.5-turbo",
+        model="gpt-4o",
         messages=messages
     )
 
-    enriched_prompt = completion.choices[0].message['content'].strip()
+    enriched_prompt = completion.choices[0].message.content
 
     return enriched_prompt

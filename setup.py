@@ -10,6 +10,7 @@ setup(
         'pytest',
         'requests',
         'openai',
+        'PyYaml'
     ],
     entry_points={
         'console_scripts': [
