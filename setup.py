@@ -10,7 +10,8 @@ setup(
         'pytest',
         'requests',
         'openai',
-        'PyYaml'
+        'PyYaml',
+        'climage'
     ],
     entry_points={
         'console_scripts': [
