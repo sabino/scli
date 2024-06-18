@@ -29,6 +29,8 @@ config = load_yaml("res/config.yaml")
 @click.option("--style", "-s", type=str, default=config["style"], help="YAML file with styles for enriching the prompt")
 @click.option("--climage-output", "-co", type=bool, default=config["climage_output"], help="Output the image using climage")
 @click.option("--open-output", "-o", type=bool, default=config["open_output"], help="Open the image using the default image viewer")
+@click.option("--output-analysis", "-oa", is_flag=True, help="Use GPT-4o Vision to analyze the output image")
+@click.option("--analysis-iterations", "-ai", default=1, type=int, help="Number of times to analyze and improve the image")
 def generate_image(
     hostname,
     port,
@@ -74,6 +76,16 @@ def generate_image(
         return
 
     save_image(response_json, hostname, port, output, climage_output, open_output)
+
+    if output_analysis:
+        for _ in range(analysis_iterations):
+            click.echo("🔍 Analyzing the output image using GPT-4o Vision...")
+            enriched_prompt = analyze_image_with_gpt4o_vision(output, prompt)
+            payload = prepare_payload(session_id, images, enriched_prompt, model, dynamic)
+            response_json = generate_image_request(base_url, payload)
+            if not response_json:
+                return
+            save_image(response_json, hostname, port, output, climage_output, open_output)
 
 
 def authenticate_session(base_url, session_id):
@@ -186,6 +198,32 @@ def enrich_prompt_with_gpt4(prompt, styles):
     )
 
     completion = client.chat.completions.create(model="gpt-4o", messages=messages)
+
+    enriched_prompt = completion.choices[0].message.content
+
+    return enriched_prompt
+
+
+def analyze_image_with_gpt4o_vision(output_dir, prompt):
+    """Analyze the output image using GPT-4o Vision and return an enriched prompt."""
+    client = OpenAI()
+
+    image_path = os.path.join(output_dir, os.listdir(output_dir)[-1])  # Get the latest image
+    with open(image_path, "rb") as image_file:
+        image_data = image_file.read()
+
+    messages = [
+        {
+            "role": "user",
+            "content": f"Analyze the following image and provide suggestions to improve it based on the prompt: '{prompt}'",
+        }
+    ]
+
+    completion = client.chat.completions.create(
+        model="gpt-4o-vision",
+        messages=messages,
+        files=[{"name": "image.png", "data": image_data}],
+    )
 
     enriched_prompt = completion.choices[0].message.content
 
