@@ -1,0 +1,6 @@
+# Default values for CLI parameters
+hostname: localhost
+port: 7801
+model: OfficialStableDiffusion/sd3_medium_incl_clips
+images: 1
+output: ./output

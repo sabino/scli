@@ -57,6 +57,29 @@ You can also pass dynamic arguments using the `-d` option:
 ```bash
 sabcli generate-image --prompt "a cat" -d model OfficialStableDiffusion/sd_xl_base_1.0 -d images 1 -s "artistic" --output /path/to/save
 
+### Configuration
+
+You can set model aliases and default values for CLI parameters in the `res/models.yaml` and `res/config.yaml` files respectively.
+
+Example `res/models.yaml`:
+```yaml
+# Model aliases
+sd3: OfficialStableDiffusion/sd3_medium_incl_clips
+sdxl: OfficialStableDiffusion/sd_xl_base_1.0
+```
+
+Example `res/config.yaml`:
+```yaml
+# Default values for CLI parameters
+hostname: localhost
+port: 7801
+model: OfficialStableDiffusion/sd3_medium_incl_clips
+images: 1
+output: ./output
+```
+
+When passing the `--model` parameter, it will use the alias if available. When passing `-d model`, it will bypass the alias lookup and use the value directly.
+
 ## Running Tests
 
 To run the tests, use the following command:

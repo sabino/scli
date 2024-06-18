@@ -5,21 +5,26 @@ import os
 from openai import OpenAI
 import openai
 import yaml
+import yaml
 import time
 import climage
 
 
+def load_yaml(file_path):
+    with open(file_path, "r") as file:
+        return yaml.safe_load(file)
+
 @click.command()
-@click.option("--hostname", default="localhost", help="Hostname of the server")
-@click.option("--port", default=7801, help="Port of the server")
+@click.option("--hostname", default=load_yaml("res/config.yaml")["hostname"], help="Hostname of the server")
+@click.option("--port", default=load_yaml("res/config.yaml")["port"], help="Port of the server")
 @click.option("--prompt", required=True, help="Prompt for the image generation")
 @click.option("--session_id", default=None, help="Existing session ID")
 @click.option(
     "--model",
-    default="OfficialStableDiffusion/sd3_medium_incl_clips",
+    default=load_yaml("res/config.yaml")["model"],
     help="Model to use for image generation",
 )
-@click.option("--images", default=1, help="Number of images to generate")
+@click.option("--images", default=load_yaml("res/config.yaml")["images"], help="Number of images to generate")
 @click.option(
     "--dynamic",
     "-d",
@@ -29,7 +34,7 @@ import climage
 )
 @click.option(
     "--output",
-    default="./output",
+    default=load_yaml("res/config.yaml")["output"],
     required=True,
     help="Directory to save the generated image",
 )
@@ -81,6 +86,13 @@ def generate_image(
 
     if enrich_prompt:
         prompt = enrich_prompt_with_gpt4(prompt, style)
+
+    # Load model aliases
+    model_aliases = load_yaml("res/models.yaml")
+
+    # Use alias if available
+    if model in model_aliases:
+        model = model_aliases[model]
 
     payload = prepare_payload(session_id, images, prompt, model, dynamic)
 
