@@ -138,7 +138,7 @@ def generate_image(
     if output_analysis:
         for _ in range(analysis_iterations):
             click.echo("🔍 Analyzing the output image using GPT-4o Vision...")
-            enriched_prompt = analyze_image_with_gpt4o_vision(image_path, prompt)
+            enriched_prompt = analyze_image_with_gpt4o_vision(image_path, prompt, output)
             payload = prepare_payload(
                 session_id, images, enriched_prompt, model, dynamic
             )
@@ -150,7 +150,7 @@ def generate_image(
             )
 
 
-def analyze_image_with_gpt4o_vision(image_path, prompt):
+def analyze_image_with_gpt4o_vision(image_path, prompt, output_dir):
     """Analyze the output image using GPT-4o Vision and return an enriched prompt."""
     client = openai
 
