@@ -75,7 +75,29 @@ def generate_image(
 
     click.echo("🌟 Starting the magical journey of image generation...")
 
-    # Step 1: Authentication (Session)
+    session_id = authenticate_session(base_url, session_id)
+    if not session_id:
+        return
+
+    if enrich_prompt:
+        prompt = enrich_prompt_with_gpt4(prompt, style)
+
+    payload = prepare_payload(session_id, images, prompt, model, dynamic)
+
+    existing_image = find_existing_image(output, prompt, model)
+    if existing_image:
+        click.echo(f"🖼️  Image already exists: {existing_image}")
+        return
+
+    response_json = generate_image_request(base_url, payload)
+    if not response_json:
+        return
+
+    save_image(response_json, hostname, port, output, climage_output, open_output)
+
+
+def authenticate_session(base_url, session_id):
+    """Authenticate session with the server."""
     try:
         if not session_id:
             click.echo(
@@ -91,22 +113,14 @@ def generate_image(
             click.echo(f"✅ Session established with ID: {session_id}")
         else:
             click.echo(f"🔄 Using existing session ID: {session_id}")
+        return session_id
     except requests.RequestException as e:
         click.echo(f"❌ Failed to establish session: {e}")
-        return
+        return None
 
-    # Step 2: Enrich the prompt (if requested)
-    if enrich_prompt:
-        try:
-            click.echo("🧠 Summoning the wisdom of GPT-4 to enrich the prompt...")
-            enriched_prompt = enrich_prompt_with_gpt4(prompt, style)
-            click.echo(f"✨ Enriched prompt received: {enriched_prompt}")
-            prompt = enriched_prompt
-        except Exception as e:
-            click.echo(f"❌ Failed to enrich prompt: {e}")
-            return
 
-    # Step 3: Prepare the payload
+def prepare_payload(session_id, images, prompt, model, dynamic):
+    """Prepare the payload for the image generation request."""
     payload = {
         "session_id": session_id,
         "images": images,
@@ -124,13 +138,11 @@ def generate_image(
     click.echo("📦 Preparing the magical ingredients for image generation...")
     click.echo(f"🔍 Parameters: {json.dumps(payload, indent=2)}")
 
-    # Step 4: Check if the image already exists
-    existing_image = find_existing_image(output, prompt, model)
-    if existing_image:
-        click.echo(f"🖼️  Image already exists: {existing_image}")
-        return
+    return payload
 
-    # Step 5: Generate the image
+
+def generate_image_request(base_url, payload):
+    """Send the image generation request to the server."""
     try:
         click.echo(
             "🎨 Casting the spell to generate the image... This might take a moment..."
@@ -143,11 +155,14 @@ def generate_image(
         response.raise_for_status()
         response_json = response.json()
         click.echo("🖼️  The image has been conjured successfully!")
+        return response_json
     except requests.RequestException as e:
         click.echo(f"❌ Failed to generate image: {e}")
-        return
+        return None
 
-    # Step 5: Save the image
+
+def save_image(response_json, hostname, port, output, climage_output, open_output):
+    """Save the generated image to the local repository."""
     try:
         image_url = response_json.get("images", [None])[0]
         if image_url:
