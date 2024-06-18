@@ -19,6 +19,12 @@ messages_config = load_yaml("res/messages.yaml")
 
 
 @click.command()
+@click.option("--image-path", "-ip", required=True, help="Path to the image to be analyzed")
+@click.option("--prompt", "-p", required=True, help="Prompt for the image analysis")
+def analyze_image(image_path, prompt):
+    """Analyze an image using GPT-4o Vision."""
+    enriched_prompt = analyze_image_with_gpt4o_vision(image_path, prompt)
+    click.echo(f"Enriched Prompt: {enriched_prompt}")
 @click.option("--hostname", default=config["hostname"], help="Hostname of the server")
 @click.option("--port", default=config["port"], help="Port of the server")
 @click.option("--prompt", "-p", required=True, help="Prompt for the image generation")
@@ -132,7 +138,7 @@ def generate_image(
     if output_analysis:
         for _ in range(analysis_iterations):
             click.echo("🔍 Analyzing the output image using GPT-4o Vision...")
-            enriched_prompt = analyze_image_with_gpt4o_vision(output, prompt)
+            enriched_prompt = analyze_image_with_gpt4o_vision(image_path, prompt)
             payload = prepare_payload(
                 session_id, images, enriched_prompt, model, dynamic
             )
@@ -144,7 +150,7 @@ def generate_image(
             )
 
 
-def analyze_image_with_gpt4o_vision(output_dir, prompt):
+def analyze_image_with_gpt4o_vision(image_path, prompt):
     """Analyze the output image using GPT-4o Vision and return an enriched prompt."""
     client = openai
 
