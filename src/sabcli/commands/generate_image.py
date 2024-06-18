@@ -14,52 +14,21 @@ def load_yaml(file_path):
     with open(file_path, "r") as file:
         return yaml.safe_load(file)
 
+config = load_yaml("res/config.yaml")
+
 @click.command()
-@click.option("--hostname", default=load_yaml("res/config.yaml")["hostname"], help="Hostname of the server")
-@click.option("--port", default=load_yaml("res/config.yaml")["port"], help="Port of the server")
+@click.option("--hostname", default=config["hostname"], help="Hostname of the server")
+@click.option("--port", default=config["port"], help="Port of the server")
 @click.option("--prompt", required=True, help="Prompt for the image generation")
 @click.option("--session_id", default=None, help="Existing session ID")
-@click.option(
-    "--model",
-    default=load_yaml("res/config.yaml")["model"],
-    help="Model to use for image generation",
-)
-@click.option("--images", default=load_yaml("res/config.yaml")["images"], help="Number of images to generate")
-@click.option(
-    "--dynamic",
-    "-d",
-    multiple=True,
-    type=(str, str),
-    help="Dynamic arguments to be added to the JSON payload",
-)
-@click.option(
-    "--output",
-    default=load_yaml("res/config.yaml")["output"],
-    required=True,
-    help="Directory to save the generated image",
-)
-@click.option(
-    "--enrich-prompt", "-ep", is_flag=True, help="Use GPT-4 to enrich the prompt"
-)
-@click.option(
-    "--style",
-    "-s",
-    type=str,
-    help="YAML file with styles for enriching the prompt",
-)
-@click.option(
-    "--climage-output",
-    "-co",
-    type=bool,
-    default=False,
-    help="Output the image using climage",
-)
-@click.option(
-    "--open-output",
-    "-o",
-    type=bool,
-    default=True,
-    help="Open the image using the default image viewer",
+@click.option("--model", default=config["model"], help="Model to use for image generation")
+@click.option("--images", default=config["images"], help="Number of images to generate")
+@click.option("--dynamic", "-d", multiple=True, type=(str, str), help="Dynamic arguments to be added to the JSON payload")
+@click.option("--output", default=config["output"], required=True, help="Directory to save the generated image")
+@click.option("--enrich-prompt", "-ep", is_flag=True, default=config["enrich_prompt"], help="Use GPT-4 to enrich the prompt")
+@click.option("--style", "-s", type=str, default=config["style"], help="YAML file with styles for enriching the prompt")
+@click.option("--climage-output", "-co", type=bool, default=config["climage_output"], help="Output the image using climage")
+@click.option("--open-output", "-o", type=bool, default=config["open_output"], help="Open the image using the default image viewer")
 )
 def generate_image(
     hostname,
