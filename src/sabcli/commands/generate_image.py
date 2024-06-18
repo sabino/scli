@@ -3,11 +3,10 @@ import requests
 import json
 import os
 import openai
-import openai
-import yaml
 import yaml
 import time
 import climage
+import base64
 
 
 def load_yaml(file_path):
@@ -79,6 +78,16 @@ def generate_image(
 
     save_image(response_json, hostname, port, output, climage_output, open_output)
 
+    if output_analysis:
+        for _ in range(analysis_iterations):
+            click.echo("🔍 Analyzing the output image using GPT-4o Vision...")
+            enriched_prompt = analyze_image_with_gpt4o_vision(output, prompt)
+            payload = prepare_payload(session_id, images, enriched_prompt, model, dynamic)
+            response_json = generate_image_request(base_url, payload)
+            if not response_json:
+                return
+            save_image(response_json, hostname, port, output, climage_output, open_output)
+
 def analyze_image_with_gpt4o_vision(output_dir, prompt):
     """Analyze the output image using GPT-4o Vision and return an enriched prompt."""
     client = openai
@@ -106,16 +115,6 @@ def analyze_image_with_gpt4o_vision(output_dir, prompt):
     enriched_prompt = completion.choices[0].message.content
 
     return enriched_prompt
-
-    if output_analysis:
-        for _ in range(analysis_iterations):
-            click.echo("🔍 Analyzing the output image using GPT-4o Vision...")
-            enriched_prompt = analyze_image_with_gpt4o_vision(output, prompt)
-            payload = prepare_payload(session_id, images, enriched_prompt, model, dynamic)
-            response_json = generate_image_request(base_url, payload)
-            if not response_json:
-                return
-            save_image(response_json, hostname, port, output, climage_output, open_output)
 
 
 def authenticate_session(base_url, session_id):
