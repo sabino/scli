@@ -44,6 +44,8 @@ def generate_image(
     style,
     climage_output,
     open_output,
+    output_analysis,
+    analysis_iterations,
 ):
     """Generate an image using the specified parameters."""
     base_url = f"http://{hostname}:{port}/API"
