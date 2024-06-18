@@ -145,7 +145,7 @@ def generate_image(
             response_json = generate_image_request(base_url, payload)
             if not response_json:
                 return
-            save_image(
+            image_path = save_image(
                 response_json, hostname, port, output, climage_output, open_output
             )
 
@@ -312,6 +312,7 @@ def save_image(response_json, hostname, port, output, climage_output, open_outpu
                 os.system(f'open "{image_path}"')
         else:
             click.echo("❌ No image URL found in the response.")
+            return None
     except requests.RequestException as e:
         click.echo(f"❌ Failed to save image: {e}")
         return None
