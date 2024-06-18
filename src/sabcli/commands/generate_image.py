@@ -2,7 +2,7 @@ import click
 import requests
 import json
 import os
-from openai import OpenAI
+import openai
 import openai
 import yaml
 import yaml
