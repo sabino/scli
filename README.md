@@ -5,7 +5,7 @@ A Python CLI tool with various utilities.
 ## Installation
 
 ```bash
-pip install .
+pip install git+https://github.com/sabino/scli.git
 sabcli echo "Hello, World!"
 sabcli echo "Hello, World!" --reverse
 
@@ -15,10 +15,10 @@ scli echo "Hello, World!" --reverse
 
 ### Enriching Prompts
 
-To enrich a prompt using GPT-4, use the `--enrich-prompt` (or `-ep`) option. You can also specify a YAML file with styles using the `--style` (or `-s`) option:
+To enrich a prompt using GPT-4, use the `--enrich-prompt` (or `-ep`) option. You can also specify styles as a string using the `--style` (or `-s`) option:
 
 ```bash
-sabcli generate-image --prompt "a cat" --enrich-prompt --style res/styles.yaml --model "OfficialStableDiffusion/sd_xl_base_1.0" --width 1024 --height 1024 --output /path/to/save
+sabcli generate-image --prompt "a cat" --enrich-prompt --style "artistic" --model "OfficialStableDiffusion/sd_xl_base_1.0" --width 1024 --height 1024 --output /path/to/save
 
 ### Generating Images
 
@@ -31,7 +31,7 @@ sabcli generate-image --prompt "a cat" --model "OfficialStableDiffusion/sd_xl_ba
 You can also pass dynamic arguments using the `-d` option:
 
 ```bash
-sabcli generate-image --prompt "a cat" -d model OfficialStableDiffusion/sd_xl_base_1.0 -d images 1 --output /path/to/save
+sabcli generate-image --prompt "a cat" -d model OfficialStableDiffusion/sd_xl_base_1.0 -d images 1 -s "artistic" --output /path/to/save
 
 ## Running Tests
 
