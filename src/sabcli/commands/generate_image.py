@@ -79,15 +79,33 @@ def generate_image(
 
     save_image(response_json, hostname, port, output, climage_output, open_output)
 
-    if output_analysis:
-        for _ in range(analysis_iterations):
-            click.echo("🔍 Analyzing the output image using GPT-4o Vision...")
-            enriched_prompt = analyze_image_with_gpt4o_vision(output, prompt)
-            payload = prepare_payload(session_id, images, enriched_prompt, model, dynamic)
-            response_json = generate_image_request(base_url, payload)
-            if not response_json:
-                return
-            save_image(response_json, hostname, port, output, climage_output, open_output)
+def analyze_image_with_gpt4o_vision(output_dir, prompt):
+    """Analyze the output image using GPT-4o Vision and return an enriched prompt."""
+    client = openai
+
+    image_path = os.path.join(output_dir, os.listdir(output_dir)[-1])  # Get the latest image
+    with open(image_path, "rb") as image_file:
+        image_data = image_file.read()
+
+    messages = [
+        {
+            "role": "user",
+            "content": [
+                {"type": "text", "text": f"Analyze the following image and provide suggestions to improve it based on the prompt: '{prompt}'"},
+                {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{base64.b64encode(image_data).decode('utf-8')}" }}
+            ]
+        }
+    ]
+
+    completion = client.chat.completions.create(
+        model="gpt-4o-vision",
+        messages=messages,
+        max_tokens=300
+    )
+
+    enriched_prompt = completion.choices[0].message.content
+
+    return enriched_prompt
 
     if output_analysis:
         for _ in range(analysis_iterations):
