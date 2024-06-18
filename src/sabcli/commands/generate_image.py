@@ -133,7 +133,7 @@ def generate_image(
     if not response_json:
         return
 
-    save_image(response_json, hostname, port, output, climage_output, open_output)
+    image_path = save_image(response_json, hostname, port, output, climage_output, open_output)
 
     if output_analysis:
         for _ in range(analysis_iterations):
@@ -314,6 +314,8 @@ def save_image(response_json, hostname, port, output, climage_output, open_outpu
             click.echo("❌ No image URL found in the response.")
     except requests.RequestException as e:
         click.echo(f"❌ Failed to save image: {e}")
+        return None
+    return image_path
 
 
 def find_existing_image(output_dir, prompt, model):
