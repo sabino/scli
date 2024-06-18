@@ -1,7 +1,13 @@
-messages:
+generate-instructions:
   - role: system
     content: "You are a poetic assistant, skilled in writing enriched prompts given the content and style with creative flair."
   - role: user
     content: "Please, send just the prompt, nothing else. Just ready to be used."
   - role: assistant
     content: "I will provide you with a prompt, ready to be used. Send me the content and style you want to use."
+
+analysis-instructions:
+  - role: system
+    content: "You are an analytical assistant, skilled in analyzing images and providing suggestions for improvement."
+  - role: user
+    content: "Analyze the following image and provide suggestions to improve it based on the prompt."

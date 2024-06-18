@@ -88,6 +88,15 @@ def generate_image(
                 return
             save_image(response_json, hostname, port, output, climage_output, open_output)
 
+def load_yaml(file_path):
+    with open(file_path, "r") as file:
+        return yaml.safe_load(file)
+
+config = load_yaml("res/config.yaml")
+messages_config = load_yaml("res/messages.yaml")
+
+# ... other code ...
+
 def analyze_image_with_gpt4o_vision(output_dir, prompt):
     """Analyze the output image using GPT-4o Vision and return an enriched prompt."""
     client = openai
@@ -96,7 +105,8 @@ def analyze_image_with_gpt4o_vision(output_dir, prompt):
     with open(image_path, "rb") as image_file:
         image_data = image_file.read()
 
-    messages = [
+    messages = messages_config["analysis-instructions"]
+    messages.append(
         {
             "role": "user",
             "content": [
@@ -104,13 +114,37 @@ def analyze_image_with_gpt4o_vision(output_dir, prompt):
                 {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{base64.b64encode(image_data).decode('utf-8')}" }}
             ]
         }
-    ]
+    )
 
     completion = client.chat.completions.create(
         model="gpt-4o-vision",
         messages=messages,
         max_tokens=300
     )
+
+    enriched_prompt = completion.choices[0].message.content
+
+    return enriched_prompt
+
+def enrich_prompt_with_gpt4(prompt, styles):
+    """Enrich the prompt using GPT-4 and styles from a YAML file."""
+    client = openai
+
+    messages = messages_config["generate-instructions"]
+
+    if styles:
+        style_instructions = f"\n {styles}"
+    else:
+        style_instructions = "any style you want to add to the prompt."
+
+    messages.append(
+        {
+            "role": "user",
+            "content": f"Enrich the following prompt: '{prompt}' with the following styles: {style_instructions}",
+        }
+    )
+
+    completion = client.chat.completions.create(model="gpt-4o", messages=messages)
 
     enriched_prompt = completion.choices[0].message.content
 
