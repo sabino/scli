@@ -182,7 +182,7 @@ def save_image(response_json, hostname, port, output, climage_output, open_outpu
 
 def enrich_prompt_with_gpt4(prompt, styles):
     """Enrich the prompt using GPT-4 and styles from a YAML file."""
-    client = OpenAI()
+    client = openai
 
     with open(os.path.join("res", "messages.yaml"), "r") as file:
         messages = yaml.safe_load(file)["messages"]
@@ -208,7 +208,7 @@ def enrich_prompt_with_gpt4(prompt, styles):
 
 def analyze_image_with_gpt4o_vision(output_dir, prompt):
     """Analyze the output image using GPT-4o Vision and return an enriched prompt."""
-    client = OpenAI()
+    client = openai
 
     image_path = os.path.join(output_dir, os.listdir(output_dir)[-1])  # Get the latest image
     with open(image_path, "rb") as image_file:
