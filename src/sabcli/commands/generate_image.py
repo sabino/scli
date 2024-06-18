@@ -19,7 +19,7 @@ config = load_yaml("res/config.yaml")
 @click.command()
 @click.option("--hostname", default=config["hostname"], help="Hostname of the server")
 @click.option("--port", default=config["port"], help="Port of the server")
-@click.option("--prompt", required=True, help="Prompt for the image generation")
+@click.option("--prompt", "-p", required=True, help="Prompt for the image generation")
 @click.option("--session_id", default=None, help="Existing session ID")
 @click.option("--model", default=config["model"], help="Model to use for image generation")
 @click.option("--images", default=config["images"], help="Number of images to generate")
@@ -159,7 +159,7 @@ def save_image(response_json, hostname, port, output, climage_output, open_outpu
                 click.echo(output)
             if open_output:
                 click.echo("📎 Opening the image using the default image viewer...")
-                os.system(f"open '{image_path}'")
+                os.system(f"open \"{image_path}\"")
         else:
             click.echo("❌ No image URL found in the response.")
     except requests.RequestException as e:

@@ -1,6 +1,10 @@
 # Default values for CLI parameters
 hostname: localhost
 port: 7801
-model: OfficialStableDiffusion/sd3_medium_incl_clips
+model: sd3
 images: 1
 output: ./output
+enrich_prompt: false
+style: ""
+climage_output: false
+open_output: true
