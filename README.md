@@ -19,6 +19,30 @@ To enrich a prompt using GPT-4, use the `--enrich-prompt` (or `-ep`) option. You
 
 ```bash
 sabcli generate-image --prompt "a cat" --enrich-prompt --style "artistic" --model "OfficialStableDiffusion/sd_xl_base_1.0" --width 1024 --height 1024 --output /path/to/save
+```
+
+**Note:** To use the enrich prompt feature, a valid OpenAI API Token needs to be set as an environment variable.
+
+### Generating Images
+
+To generate an image using the CLI, use the following command:
+
+```bash
+sabcli generate-image --prompt "a cat" --model "OfficialStableDiffusion/sd_xl_base_1.0" --width 1024 --height 1024 --output /path/to/save
+```
+
+You can also pass dynamic arguments using the `-d` option:
+
+```bash
+sabcli generate-image --prompt "a cat" -d model OfficialStableDiffusion/sd_xl_base_1.0 -d images 1 -s "artistic" --output /path/to/save
+```
+
+**Note:** The `generate-image` command requires [Stable Swarm UI](https://github.com/Stability-AI/StableSwarmUI) running. You need to set the hostname, port, etc., accordingly.
+
+To enrich a prompt using GPT-4, use the `--enrich-prompt` (or `-ep`) option. You can also specify styles as a string using the `--style` (or `-s`) option:
+
+```bash
+sabcli generate-image --prompt "a cat" --enrich-prompt --style "artistic" --model "OfficialStableDiffusion/sd_xl_base_1.0" --width 1024 --height 1024 --output /path/to/save
 
 ### Generating Images
 
