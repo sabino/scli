@@ -29,7 +29,6 @@ config = load_yaml("res/config.yaml")
 @click.option("--style", "-s", type=str, default=config["style"], help="YAML file with styles for enriching the prompt")
 @click.option("--climage-output", "-co", type=bool, default=config["climage_output"], help="Output the image using climage")
 @click.option("--open-output", "-o", type=bool, default=config["open_output"], help="Open the image using the default image viewer")
-)
 def generate_image(
     hostname,
     port,
