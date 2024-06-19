@@ -301,6 +301,7 @@ def save_image(response_json, hostname, port, output, climage_output, open_outpu
                                   aws_access_key_id=gcs_key,
                                   aws_secret_access_key=gcs_secret,
                                   config=Config(signature_version='s3v4'))
+                image_name = os.path.basename(image_path)
                 s3.upload_file(image_path, gcs_bucket, image_name)
                 click.echo(f"✅ Image uploaded to GCS bucket: {gcs_bucket}")
             else:
