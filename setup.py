@@ -11,7 +11,8 @@ setup(
         'requests',
         'openai',
         'PyYaml',
-        'climage'
+        'climage',
+        'boto3'
     ],
     entry_points={
         'console_scripts': [
