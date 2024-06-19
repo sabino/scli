@@ -81,6 +81,12 @@ messages_config = load_yaml("res/messages.yaml")
     type=int,
     help="Number of times to analyze and improve the image",
 )
+@click.option(
+    "--keep-local-when-upload",
+    is_flag=True,
+    default=False,
+    help="Keep the local file after uploading to GCS",
+)
 def generate_image(
     hostname,
     port,
@@ -132,7 +138,7 @@ def generate_image(
     gcs_secret = config.get("gcs_secret")
     gcs_host = config.get("gcs_host")
 
-    image_path = save_image(response_json, hostname, port, output, climage_output, open_output, gcs_bucket, gcs_key, gcs_secret, gcs_host)
+    image_path = save_image(response_json, hostname, port, output, climage_output, open_output, gcs_bucket, gcs_key, gcs_secret, gcs_host, keep_local_when_upload)
 
     if output_analysis:
         for _ in range(analysis_iterations):
@@ -290,7 +296,7 @@ def generate_image_request(base_url, payload):
 import boto3
 from botocore.client import Config
 
-def save_image(response_json, hostname, port, output, climage_output, open_output, gcs_bucket=None, gcs_key=None, gcs_secret=None, gcs_host=None):
+def save_image(response_json, hostname, port, output, climage_output, open_output, gcs_bucket=None, gcs_key=None, gcs_secret=None, gcs_host=None, keep_local_when_upload=False):
     """Save the generated image to the local repository."""
     try:
         image_url = response_json.get("images", [None])[0]
@@ -299,6 +305,11 @@ def save_image(response_json, hostname, port, output, climage_output, open_outpu
             image_response = requests.get(f"http://{hostname}:{port}/{image_url}")
             image_response.raise_for_status()
             image_path = f"{output}/{image_url.split('/')[-1]}"
+            # Save the image locally
+            with open(image_path, "wb") as f:
+                f.write(image_response.content)
+            click.echo(f"✅ Image saved to {image_path}")
+
             if gcs_bucket and gcs_key and gcs_secret and gcs_host:
                 # Upload to GCS
                 s3 = boto3.client('s3',
@@ -309,18 +320,16 @@ def save_image(response_json, hostname, port, output, climage_output, open_outpu
                 image_name = os.path.basename(image_path)
                 s3.upload_file(image_path, gcs_bucket, image_name)
                 click.echo(f"✅ Image uploaded to GCS bucket: {gcs_bucket}")
-            else:
-                # Save the image locally
-                with open(image_path, "wb") as f:
-                    f.write(image_response.content)
-                click.echo(f"✅ Image saved to {image_path}")
-                if climage_output:
-                    click.echo("🖼️ Displaying the image using climage...")
-                    output = climage.convert(image_path, is_unicode=True)
-                    click.echo(output)
-                if open_output:
-                    click.echo("📎 Opening the image using the default image viewer...")
-                    os.system(f'open "{image_path}"')
+                if not keep_local_when_upload:
+                    os.remove(image_path)
+                    click.echo(f"🗑️  Local image file deleted: {image_path}")
+            if climage_output:
+                click.echo("🖼️ Displaying the image using climage...")
+                output = climage.convert(image_path, is_unicode=True)
+                click.echo(output)
+            if open_output:
+                click.echo("📎 Opening the image using the default image viewer...")
+                os.system(f'open "{image_path}"')
         else:
             click.echo("❌ No image URL found in the response.")
             return None
