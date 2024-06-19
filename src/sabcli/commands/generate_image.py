@@ -139,7 +139,7 @@ def generate_image(
     gcs_secret = config.get("gcs_secret")
     gcs_host = config.get("gcs_host")
 
-    image_path = save_image(response_json, hostname, port, output, climage_output, open_output, gcs_bucket, gcs_key, gcs_secret, gcs_host, keep_local_when_upload)
+    image_path = save_image(response_json, hostname, port, output, climage_output, open_output, gcs_bucket, gcs_key, gcs_secret, gcs_host, keep_local_when_upload, output_analysis)
 
     if output_analysis:
         for _ in range(analysis_iterations):
@@ -152,8 +152,11 @@ def generate_image(
             if not response_json:
                 return
             image_path = save_image(
-                response_json, hostname, port, output, climage_output, open_output
+                response_json, hostname, port, output, climage_output, open_output, gcs_bucket, gcs_key, gcs_secret, gcs_host, keep_local_when_upload, output_analysis
             )
+    if not keep_local_when_upload and not output_analysis:
+        os.remove(image_path)
+        click.echo(f"🗑️  Local image file deleted: {image_path}")
 
 
 def analyze_image_with_gpt4o_vision(image_path, prompt):
@@ -297,7 +300,7 @@ def generate_image_request(base_url, payload):
 import boto3
 from botocore.client import Config
 
-def save_image(response_json, hostname, port, output, climage_output, open_output, gcs_bucket=None, gcs_key=None, gcs_secret=None, gcs_host=None, keep_local_when_upload=False):
+def save_image(response_json, hostname, port, output, climage_output, open_output, gcs_bucket=None, gcs_key=None, gcs_secret=None, gcs_host=None, keep_local_when_upload=False, output_analysis=False):
     """Save the generated image to the local repository."""
     try:
         image_url = response_json.get("images", [None])[0]
@@ -321,7 +324,7 @@ def save_image(response_json, hostname, port, output, climage_output, open_outpu
                 image_name = os.path.basename(image_path)
                 s3.upload_file(image_path, gcs_bucket, image_name)
                 click.echo(f"✅ Image uploaded to GCS bucket: {gcs_bucket}")
-                if not keep_local_when_upload:
+                if not keep_local_when_upload and not output_analysis:
                     os.remove(image_path)
                     click.echo(f"🗑️  Local image file deleted: {image_path}")
             if climage_output:
