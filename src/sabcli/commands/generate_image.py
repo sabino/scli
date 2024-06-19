@@ -102,6 +102,7 @@ def generate_image(
     open_output,
     output_analysis,
     analysis_iterations,
+    keep_local_when_upload,
 ):
     """Generate an image using the specified parameters."""
     base_url = f"http://{hostname}:{port}/API"
