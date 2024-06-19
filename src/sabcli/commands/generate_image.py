@@ -127,7 +127,12 @@ def generate_image(
     if not response_json:
         return
 
-    image_path = save_image(response_json, hostname, port, output, climage_output, open_output)
+    gcs_bucket = config.get("gcs_bucket")
+    gcs_key = config.get("gcs_key")
+    gcs_secret = config.get("gcs_secret")
+    gcs_host = config.get("gcs_host")
+
+    image_path = save_image(response_json, hostname, port, output, climage_output, open_output, gcs_bucket, gcs_key, gcs_secret, gcs_host)
 
     if output_analysis:
         for _ in range(analysis_iterations):
