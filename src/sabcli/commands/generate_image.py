@@ -282,7 +282,10 @@ def generate_image_request(base_url, payload):
         return None
 
 
-def save_image(response_json, hostname, port, output, climage_output, open_output):
+import boto3
+from botocore.client import Config
+
+def save_image(response_json, hostname, port, output, climage_output, open_output, gcs_bucket=None, gcs_key=None, gcs_secret=None, gcs_host=None):
     """Save the generated image to the local repository."""
     try:
         image_url = response_json.get("images", [None])[0]
