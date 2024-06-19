@@ -294,16 +294,27 @@ def save_image(response_json, hostname, port, output, climage_output, open_outpu
             image_response = requests.get(f"http://{hostname}:{port}/{image_url}")
             image_response.raise_for_status()
             image_path = f"{output}/{image_url.split('/')[-1]}"
-            with open(image_path, "wb") as f:
-                f.write(image_response.content)
-            click.echo(f"✅ Image saved to {image_path}")
-            if climage_output:
-                click.echo("🖼️ Displaying the image using climage...")
-                output = climage.convert(image_path, is_unicode=True)
-                click.echo(output)
-            if open_output:
-                click.echo("📎 Opening the image using the default image viewer...")
-                os.system(f'open "{image_path}"')
+            if gcs_bucket and gcs_key and gcs_secret and gcs_host:
+                # Upload to GCS
+                s3 = boto3.client('s3',
+                                  endpoint_url=gcs_host,
+                                  aws_access_key_id=gcs_key,
+                                  aws_secret_access_key=gcs_secret,
+                                  config=Config(signature_version='s3v4'))
+                s3.upload_file(image_path, gcs_bucket, image_name)
+                click.echo(f"✅ Image uploaded to GCS bucket: {gcs_bucket}")
+            else:
+                # Save the image locally
+                with open(image_path, "wb") as f:
+                    f.write(image_response.content)
+                click.echo(f"✅ Image saved to {image_path}")
+                if climage_output:
+                    click.echo("🖼️ Displaying the image using climage...")
+                    output = climage.convert(image_path, is_unicode=True)
+                    click.echo(output)
+                if open_output:
+                    click.echo("📎 Opening the image using the default image viewer...")
+                    os.system(f'open "{image_path}"')
         else:
             click.echo("❌ No image URL found in the response.")
             return None
