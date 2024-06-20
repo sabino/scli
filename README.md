@@ -1,6 +1,6 @@
 # sabcli
 
-A Python CLI tool for interacting with Stable Swarm UI, providing various utilities for generating and enriching images using models like Stable Diffusion.
+A Python CLI tool for interacting with Stable Swarm UI, providing various utilities for generating and enriching images using models like Stable Diffusion. This project uses GPT-4o to enrich given prompts and iterate over each result using GPT-4o vision capabilities. It also allows sending the generated images to a bucket (tested with Google Cloud Storage with enabled interop to act as S3 - so it should work with any S3 compatible backend).
 
 ## Installation
 
