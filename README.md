@@ -1,14 +1,17 @@
 # sabcli
 
-A Python CLI tool with various utilities.
+A Python CLI tool with various utilities. This tool is a wrapper around the Stable Swarm UI (which uses Stable Diffusion). It optionally uses GPT to enrich the given prompt.
 
 ## Installation
 
-```bash
-pip install git+https://github.com/sabino/scli.git
-sabcli echo "Hello, World!"
-sabcli echo "Hello, World!" --reverse
+<pre>pip install git+https://github.com/sabino/scli.git</pre>
 
+## Usage
+
+### Echo Command
+This was added just as a starting point
+
+```bash
 scli echo "Hello, World!"
 scli echo "Hello, World!" --reverse
 ```
@@ -18,44 +21,26 @@ scli echo "Hello, World!" --reverse
 To enrich a prompt using GPT-4, use the `--enrich-prompt` (or `-ep`) option. You can also specify styles as a string using the `--style` (or `-s`) option:
 
 ```bash
-sabcli generate-image --prompt "a cat" --enrich-prompt --style "artistic" --model "OfficialStableDiffusion/sd_xl_base_1.0" --width 1024 --height 1024 --output /path/to/save
+scli generate-image --prompt "a cat" --enrich-prompt --style "artistic" --model "OfficialStableDiffusion/sd_xl_base_1.0" --width 1024 --height 1024 --output /path/to/save
 ```
 
-**Note:** To use the enrich prompt feature, a valid OpenAI API Token needs to be set as an environment variable.
+**Note:** To use the enrich prompt feature, a valid OpenAI API Token needs to be set as an environment variable `OPENAI_API_KEY`.
 
 ### Generating Images
 
 To generate an image using the CLI, use the following command:
 
 ```bash
-sabcli generate-image --prompt "a cat" --model "OfficialStableDiffusion/sd_xl_base_1.0" --width 1024 --height 1024 --output /path/to/save
+scli generate-image --prompt "a cat" --model "OfficialStableDiffusion/sd_xl_base_1.0" --width 1024 --height 1024 --output /path/to/save
 ```
 
 You can also pass dynamic arguments using the `-d` option:
 
 ```bash
-sabcli generate-image --prompt "a cat" -d model OfficialStableDiffusion/sd_xl_base_1.0 -d images 1 -s "artistic" --output /path/to/save
+scli generate-image --prompt "a cat" -d model OfficialStableDiffusion/sd_xl_base_1.0 -d images 1 -s "artistic" --output /path/to/save
 ```
 
 **Note:** The `generate-image` command requires [Stable Swarm UI](https://github.com/Stability-AI/StableSwarmUI) running. You need to set the hostname, port, etc., accordingly.
-
-To enrich a prompt using GPT-4, use the `--enrich-prompt` (or `-ep`) option. You can also specify styles as a string using the `--style` (or `-s`) option:
-
-```bash
-sabcli generate-image --prompt "a cat" --enrich-prompt --style "artistic" --model "OfficialStableDiffusion/sd_xl_base_1.0" --width 1024 --height 1024 --output /path/to/save
-
-### Generating Images
-
-To generate an image using the CLI, use the following command:
-
-```bash
-sabcli generate-image --prompt "a cat" --model "OfficialStableDiffusion/sd_xl_base_1.0" --width 1024 --height 1024 --output /path/to/save
-```
-
-You can also pass dynamic arguments using the `-d` option:
-
-```bash
-sabcli generate-image --prompt "a cat" -d model OfficialStableDiffusion/sd_xl_base_1.0 -d images 1 -s "artistic" --output /path/to/save
 
 ### Configuration
 
@@ -73,7 +58,7 @@ Example `res/config.yaml`:
 # Default values for CLI parameters
 hostname: localhost
 port: 7801
-model: OfficialStableDiffusion/sd3_medium_incl_clips
+model: sd3
 images: 1
 output: ./output
 ```
@@ -84,20 +69,8 @@ When passing the `--model` parameter, it will use the alias if available. When p
 
 To run the tests, use the following command:
 
-```bash
-pytest
-
-## Usage
-
-### Running Tests
+`pytest`
 
 To run the tests using the CLI, use the following command:
 
-```bash
-sabcli test
-```
-
-```bash
-sabcli echo "Hello, World!"
-sabcli echo "Hello, World!" --reverse
-```
+`scli test`
