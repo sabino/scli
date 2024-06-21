@@ -83,6 +83,7 @@ messages_config = load_yaml("res/messages.yaml")
 )
 @click.option(
     "--keep-local-when-upload",
+    "-kl",
     is_flag=True,
     default=False,
     help="Keep the local file after uploading to GCS",
