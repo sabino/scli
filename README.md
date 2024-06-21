@@ -1,4 +1,4 @@
-# sabcli
+# scli
 
 A Python CLI tool with various utilities. This tool is a wrapper around the Stable Swarm UI (which uses Stable Diffusion). It optionally uses GPT to enrich the given prompt.
 
